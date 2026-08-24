@@ -1,0 +1,72 @@
+# =============================================================================
+# AI Revenue Recovery Platform — Local Development Infrastructure
+# -----------------------------------------------------------------------------
+# Foundation stack: PostgreSQL (transactional source of truth + audit) and
+# Redis (distributed locks, idempotency keys, cache). Later phases add Kafka,
+# Temporal, ClickHouse, and object storage as their owning phases come online.
+#
+# Values are read from the repository-root `.env` when present (the infra:*
+# scripts set --project-directory to the repo root). Every variable also has an
+# inline default that matches `.env.example`, so the stack comes up cleanly even
+# with no `.env` file. These credentials are for LOCAL DEVELOPMENT ONLY.
+#
+# Usage (from the repo root):
+#     pnpm infra:up       # start + wait for healthy
+#     pnpm infra:check    # verify connectivity
+#     pnpm infra:down     # stop (data is preserved)
+#     pnpm infra:reset    # stop + delete volumes (destroys data)
+# =============================================================================
+
+name: revenue-recovery
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: revenue-recovery-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-revenue_recovery}
+    ports:
+      # Host port is overridable (e.g. if 5432 is already taken locally).
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-revenue_recovery}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    container_name: revenue-recovery-redis
+    restart: unless-stopped
+    # appendonly persistence so idempotency keys survive a container restart.
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  pgdata:
+    name: revenue-recovery-pgdata
+  redisdata:
+    name: revenue-recovery-redisdata
+
+networks:
+  default:
+    name: revenue-recovery-net
