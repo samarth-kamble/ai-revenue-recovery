@@ -10,7 +10,13 @@
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "clean": "turbo clean"
+    "clean": "turbo clean",
+    "infra:up": "bash infrastructure/scripts/compose.sh up -d --wait",
+    "infra:down": "bash infrastructure/scripts/compose.sh down",
+    "infra:reset": "bash infrastructure/scripts/compose.sh down -v",
+    "infra:logs": "bash infrastructure/scripts/compose.sh logs -f",
+    "infra:ps": "bash infrastructure/scripts/compose.sh ps",
+    "infra:check": "bash infrastructure/scripts/check-connectivity.sh"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",
