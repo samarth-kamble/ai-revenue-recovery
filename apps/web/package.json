@@ -13,6 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@workspace/config": "workspace:*",
     "@workspace/ui": "workspace:*",
     "lucide-react": "^1.34.0",
     "next": "16.2.6",
