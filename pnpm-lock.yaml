@@ -32,6 +32,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@workspace/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@workspace/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -69,6 +72,34 @@ importers:
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      eslint:
+        specifier: ^9
+        version: 9.39.4(jiti@2.7.0)
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.7
+        version: 3.2.7(@types/node@20.19.41)(jiti@2.7.0)(lightningcss@1.32.0)
+
+  packages/config:
+    dependencies:
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.6.1
+      zod:
+        specifier: ^3.24.2
+        version: 3.25.76
+    devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.19.41
+      '@workspace/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@workspace/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       eslint:
         specifier: ^9
         version: 9.39.4(jiti@2.7.0)
@@ -1911,6 +1942,10 @@ packages:
 
   dotenv@16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
+
+  dotenv@16.6.1:
+    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
     engines: {node: '>=12'}
 
   dotenv@17.4.2:
@@ -5198,6 +5233,8 @@ snapshots:
       is-obj: 2.0.0
 
   dotenv@16.0.3: {}
+
+  dotenv@16.6.1: {}
 
   dotenv@17.4.2: {}
 
