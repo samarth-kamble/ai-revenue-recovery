@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# ---------------------------------------------------------------------------
+# Node / JavaScript / TypeScript
+# ---------------------------------------------------------------------------
 # dependencies
 node_modules
 .pnp
@@ -9,37 +12,93 @@ node_modules
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+.pnpm-store/
 
-# testing
-coverage
-
-# next.js
-.next/
-out/
-
-# production
+# build output
 build
 dist
+out/
+.next/
+*.tsbuildinfo
+next-env.d.ts
 
 # turbo
 .turbo
 
-# misc
-.DS_Store
-*.pem
+# testing / coverage
+coverage
+.nyc_output
 
-# debug
+# debug logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# ---------------------------------------------------------------------------
+# Python  (services/, ml/, simulator/)
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
 
-# vercel
+# ---------------------------------------------------------------------------
+# ML / data artifacts
+# ---------------------------------------------------------------------------
+mlruns/
+.mlflow/
+*.pkl
+*.joblib
+*.onnx
+*.pt
+*.h5
+# Generated & processed datasets: keep the folder, ignore its contents.
+/data/generated/*
+/data/processed/*
+/data/synthetic/*
+!/data/generated/.gitkeep
+!/data/processed/.gitkeep
+!/data/synthetic/.gitkeep
+
+# ---------------------------------------------------------------------------
+# Environment / secrets
+# ---------------------------------------------------------------------------
+# Ignore all env files EXCEPT committed example templates (.env.example).
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# Editors / OS
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ---------------------------------------------------------------------------
+# Misc
+# ---------------------------------------------------------------------------
+*.pem
 .vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+*.log
+logs/
+tmp/
+.cache/
