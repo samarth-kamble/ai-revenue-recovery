@@ -28,17 +28,17 @@ The central design rule is that **AI intelligence is never wired directly to mon
 
 Turborepo + pnpm workspaces. TypeScript services live under `apps/`, Python services under `services/`.
 
-| Path | Contents | Status |
-| --- | --- | --- |
-| `apps/` | TypeScript/NestJS services + Next.js dashboard (`web`) | `web` scaffolded |
-| `packages/` | Shared TS packages (`ui`, `eslint-config`, `typescript-config`; later `contracts`, `config`, `telemetry`, …) | base packages present |
-| `services/` | Python services: `ai-agent`, `ml-inference`, `simulation-engine` | placeholder |
-| `ml/` | Model `training`, `evaluation`, `experiments`, `models` | placeholder |
-| `simulator/` | Synthetic world + ground-truth generation | placeholder |
-| `infrastructure/` | Docker, Kafka, Postgres, Redis, Temporal, monitoring configs | placeholder |
-| `docs/` | `architecture`, `decisions` (ADRs), `api`, `evaluation` | placeholder |
+| Path              | Contents                                                                                                     | Status                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ | --------------------- |
+| `apps/`           | TypeScript/NestJS services + Next.js dashboard (`web`)                                                       | `web` scaffolded      |
+| `packages/`       | Shared TS packages (`ui`, `eslint-config`, `typescript-config`; later `contracts`, `config`, `telemetry`, …) | base packages present |
+| `services/`       | Python services: `ai-agent`, `ml-inference`, `simulation-engine`                                             | placeholder           |
+| `ml/`             | Model `training`, `evaluation`, `experiments`, `models`                                                      | placeholder           |
+| `simulator/`      | Synthetic world + ground-truth generation                                                                    | placeholder           |
+| `infrastructure/` | Docker, Kafka, Postgres, Redis, Temporal, monitoring configs                                                 | placeholder           |
+| `docs/`           | `architecture`, `decisions` (ADRs), `api`, `evaluation`                                                      | placeholder           |
 
-Directories marked *placeholder* currently hold a `.gitkeep` and are filled in during the phase that owns them (see `PROJECT_SPEC.md` §20).
+Directories marked _placeholder_ currently hold a `.gitkeep` and are filled in during the phase that owns them (see `PROJECT_SPEC.md` §20).
 
 ---
 
@@ -93,16 +93,16 @@ pnpm dev
 
 Run from the repository root; each fans out across the workspace via Turborepo.
 
-| Script | What it does |
-| --- | --- |
-| `pnpm dev` | Run every workspace's `dev` task (watch mode) |
-| `pnpm build` | Build all workspaces |
-| `pnpm lint` | Lint all workspaces |
-| `pnpm typecheck` | Type-check all workspaces |
-| `pnpm test` | Run all workspace tests |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check formatting without writing changes |
-| `pnpm clean` | Remove build artifacts / caches |
+| Script              | What it does                                  |
+| ------------------- | --------------------------------------------- |
+| `pnpm dev`          | Run every workspace's `dev` task (watch mode) |
+| `pnpm build`        | Build all workspaces                          |
+| `pnpm lint`         | Lint all workspaces                           |
+| `pnpm typecheck`    | Type-check all workspaces                     |
+| `pnpm test`         | Run all workspace tests                       |
+| `pnpm format`       | Format code with Prettier                     |
+| `pnpm format:check` | Check formatting without writing changes      |
+| `pnpm clean`        | Remove build artifacts / caches               |
 
 ---
 
