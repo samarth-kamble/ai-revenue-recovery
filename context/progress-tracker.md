@@ -56,27 +56,27 @@
 - 🟢 RevenueRisk
 - 🟢 RecoveryCase
 - 🟢 Recovery lifecycle
-- ⬜ ML prediction
+- 🟢 ML prediction
 
 ## Phase 7 — AI
-- ⬜ Agent interface
-- ⬜ Structured output
-- ⬜ Validation
-- ⬜ Version tracking
+- 🟢 Agent interface
+- 🟢 Structured output
+- 🟢 Validation
+- 🟢 Version tracking
 
 ## Phase 8 — Policy
-- ⬜ Policy
-- ⬜ Policy evaluation
-- ⬜ PolicyDecision
-- ⬜ Stopping rules
+- 🟢 Policy
+- 🟢 Policy evaluation
+- 🟢 PolicyDecision
+- 🟢 Stopping rules
 
 ## Phase 9 — Workflow
-- ⬜ RecoveryAction
+- 🟢 RecoveryAction
 - ⬜ Durable execution
 - ⬜ Retry
 - ⬜ Timeout
-- ⬜ Idempotency
-- ⬜ Terminal outcomes
+- 🟢 Idempotency
+- 🟢 Terminal outcomes
 
 ## Phase 10 — Observability
 - 🟢 AuditEvent
@@ -108,9 +108,9 @@
 
 ## Current Work
 
-**Phase:** 7 — AI Recovery Agent & Policy Guardrails  
-**Task:** ML Prediction & AI Agent Recommendation Service  
-**Last verified:** Payment Service Ingestion & Recovery Case Initialization
+**Phase:** 9 — Workflow Execution & Dashboard UI  
+**Task:** Merchant Recovery Visualizer & Dashboard  
+**Last verified:** Recovery Service ML Prediction, AI Decision Engine, & Policy Checks
 
 ## Agent Rule
 
