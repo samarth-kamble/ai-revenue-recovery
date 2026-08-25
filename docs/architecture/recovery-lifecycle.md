@@ -21,16 +21,16 @@ predictions. Note the ordering — **DECIDE precedes AUTHORIZE**. Intelligence
 produces a recommendation first; the deterministic policy gate authorizes it
 second. That ordering is the lifecycle expression of the money-movement boundary.
 
-| Stage | Question it answers | Owning service | Representative event |
-| --- | --- | --- | --- |
-| **DETECT** | Is revenue at risk, and how much? | Revenue Detection | `payment.failed` → `revenue-risk.detected` |
-| **UNDERSTAND** | What is the customer/payment context? | Recovery + AI Decision | `recovery.created` |
-| **PREDICT** | How likely is recovery? | ML Inference | — |
-| **DECIDE** | Which intervention should we recommend? | AI Decision (agent) | `recovery.decision.created` |
-| **AUTHORIZE** | Is that action allowed by policy? | Policy | — |
-| **EXECUTE** | Carry out the approved action | Temporal workflow + Payment/Notification | `recovery.action.requested` → `recovery.action.executed` |
-| **MEASURE** | What actually happened? | Analytics (+ Payment status) | `recovery.completed` / `recovery.stopped` / `recovery.escalated` |
-| **LEARN** | Improve predictions against ground truth | Simulation + ML training/eval | — |
+| Stage          | Question it answers                      | Owning service                           | Representative event                                             |
+| -------------- | ---------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------- |
+| **DETECT**     | Is revenue at risk, and how much?        | Revenue Detection                        | `payment.failed` → `revenue-risk.detected`                       |
+| **UNDERSTAND** | What is the customer/payment context?    | Recovery + AI Decision                   | `recovery.created`                                               |
+| **PREDICT**    | How likely is recovery?                  | ML Inference                             | —                                                                |
+| **DECIDE**     | Which intervention should we recommend?  | AI Decision (agent)                      | `recovery.decision.created`                                      |
+| **AUTHORIZE**  | Is that action allowed by policy?        | Policy                                   | —                                                                |
+| **EXECUTE**    | Carry out the approved action            | Temporal workflow + Payment/Notification | `recovery.action.requested` → `recovery.action.executed`         |
+| **MEASURE**    | What actually happened?                  | Analytics (+ Payment status)             | `recovery.completed` / `recovery.stopped` / `recovery.escalated` |
+| **LEARN**      | Improve predictions against ground truth | Simulation + ML training/eval            | —                                                                |
 
 Event names are from [`PROJECT_SPEC.md` §12](../../PROJECT_SPEC.md); dashes mark
 stages that are internal steps rather than published domain events.
@@ -95,7 +95,7 @@ sequenceDiagram
     POL-->>AUD: policy decision (ALLOWED / DENIED)
     alt ALLOWED
         POL->>WF: authorize action
-        WF->>PAY: execute (e.g. retry) 
+        WF->>PAY: execute (e.g. retry)
         PAY-->>WF: observed status
         WF-->>AUD: action executed
     else DENIED
@@ -112,5 +112,5 @@ sequenceDiagram
 The lifecycle assumes the reliability guarantees in
 [`PROJECT_SPEC.md` §13](../../PROJECT_SPEC.md): idempotent handling of duplicate
 events, retries with exponential backoff, distributed locks, and — most
-importantly for **EXECUTE → MEASURE** — never treating an *unknown* payment
+importantly for **EXECUTE → MEASURE** — never treating an _unknown_ payment
 state as either success or failure.

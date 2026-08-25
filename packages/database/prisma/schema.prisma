@@ -1,0 +1,372 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentStatus {
+  CREATED
+  SUCCEEDED
+  FAILED
+}
+
+enum PaymentAttemptStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  UNKNOWN
+}
+
+enum RecoveryCaseStatus {
+  OPEN
+  IN_PROGRESS
+  COMPLETED
+  ESCALATED
+  STOPPED
+}
+
+enum RecoveryActionType {
+  RETRY_PAYMENT
+  SEND_REMINDER
+  REQUEST_PAYMENT_METHOD_UPDATE
+  ESCALATE
+  STOP
+}
+
+enum RecoveryActionStatus {
+  REQUESTED
+  SCHEDULED
+  EXECUTED
+  FAILED
+  CANCELLED
+}
+
+enum PolicyResult {
+  ALLOWED
+  DENIED
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum FailureCode {
+  INSUFFICIENT_FUNDS
+  EXPIRED_CARD
+  BANK_DOWNTIME
+  AUTHENTICATION_FAILED
+  GATEWAY_TIMEOUT
+  INVALID_CARD
+  MANDATE_EXPIRED
+}
+
+enum PolicyStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum AuditEventType {
+  PAYMENT_CREATED
+  PAYMENT_FAILED
+  PAYMENT_SUCCEEDED
+  REVENUE_RISK_DETECTED
+  RECOVERY_CASE_CREATED
+  ML_PREDICTION_CREATED
+  AI_DECISION_CREATED
+  POLICY_APPROVED
+  POLICY_DENIED
+  RECOVERY_ACTION_SCHEDULED
+  RECOVERY_ACTION_EXECUTED
+  RECOVERY_COMPLETED
+  RECOVERY_ESCALATED
+  RECOVERY_STOPPED
+}
+
+model Customer {
+  id                String    @id @default(cuid())
+  externalId        String?   @unique
+  email             String?
+  name              String?
+  subscriptionType  String?
+  lifetimeStartedAt DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  payments      Payment[]
+  recoveryCases RecoveryCase[]
+  notifications Notification[]
+
+  @@index([email])
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  customerId     String
+  amount         Decimal       @db.Decimal(12, 2)
+  currency       String        @default("INR") @db.VarChar(3)
+  status         PaymentStatus @default(CREATED)
+  method         String?
+  failureReason  String?
+  idempotencyKey String?       @unique
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  customer     Customer         @relation(fields: [customerId], references: [id])
+  attempts     PaymentAttempt[]
+  failures     PaymentFailure[]
+  revenueRisk  RevenueRisk?
+  recoveryCase RecoveryCase?
+  auditEvents  AuditEvent[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model PaymentAttempt {
+  id            String               @id @default(cuid())
+  paymentId     String
+  attemptNumber Int
+  status        PaymentAttemptStatus @default(PENDING)
+  failureReason String?
+  gatewayRef    String?
+  occurredAt    DateTime             @default(now())
+  createdAt     DateTime             @default(now())
+
+  payment Payment         @relation(fields: [paymentId], references: [id])
+  failure PaymentFailure?
+
+  producedByAction RecoveryAction?
+
+  @@unique([paymentId, attemptNumber])
+  @@index([paymentId])
+  @@index([status])
+}
+
+model PaymentFailure {
+  id               String      @id @default(cuid())
+  paymentId        String
+  paymentAttemptId String      @unique
+  failureCode      FailureCode
+  failureReason    String
+  isTransient      Boolean     @default(false)
+  rawDetails       Json?
+  createdAt        DateTime    @default(now())
+
+  payment        Payment        @relation(fields: [paymentId], references: [id])
+  paymentAttempt PaymentAttempt @relation(fields: [paymentAttemptId], references: [id])
+
+  @@index([paymentId])
+  @@index([failureCode])
+}
+
+model RevenueRisk {
+  id           String    @id @default(cuid())
+  paymentId    String    @unique
+  amountAtRisk Decimal   @db.Decimal(12, 2)
+  currency     String    @default("INR") @db.VarChar(3)
+  reason       String?
+  detectedAt   DateTime  @default(now())
+  resolvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  payment      Payment       @relation(fields: [paymentId], references: [id])
+  recoveryCase RecoveryCase?
+
+  @@index([detectedAt])
+}
+
+model RecoveryCase {
+  id            String             @id @default(cuid())
+  paymentId     String             @unique
+  revenueRiskId String?            @unique
+  customerId    String
+  status        RecoveryCaseStatus @default(OPEN)
+  correlationId String?
+  openedAt      DateTime           @default(now())
+  closedAt      DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  payment     Payment      @relation(fields: [paymentId], references: [id])
+  revenueRisk RevenueRisk? @relation(fields: [revenueRiskId], references: [id])
+  customer    Customer     @relation(fields: [customerId], references: [id])
+
+  predictions     MLPrediction[]
+  decisions       AIDecision[]
+  policyDecisions PolicyDecision[]
+  actions         RecoveryAction[]
+  notifications   Notification[]
+  auditEvents     AuditEvent[]
+
+  @@index([status])
+  @@index([customerId])
+  @@index([correlationId])
+}
+
+model MLPrediction {
+  id                  String   @id @default(cuid())
+  recoveryCaseId      String
+  recoveryProbability Float
+  modelVersion        String
+  features            Json?
+  predictedAt         DateTime @default(now())
+  createdAt           DateTime @default(now())
+
+  recoveryCase RecoveryCase @relation(fields: [recoveryCaseId], references: [id])
+
+  decisions AIDecision[]
+
+  @@index([recoveryCaseId])
+  @@index([modelVersion])
+}
+
+model AIDecision {
+  id                String             @id @default(cuid())
+  recoveryCaseId    String
+  mlPredictionId    String?
+  recommendedAction RecoveryActionType
+  delayHours        Int?
+  reason            String
+  confidence        Float?
+  agentVersion      String?
+  reasonCodes       String[]           @default([])
+  modelVersion      String?
+  rawOutput         Json?
+  decidedAt         DateTime           @default(now())
+  createdAt         DateTime           @default(now())
+
+  recoveryCase RecoveryCase  @relation(fields: [recoveryCaseId], references: [id])
+  mlPrediction MLPrediction? @relation(fields: [mlPredictionId], references: [id])
+
+  policyDecision PolicyDecision?
+  action         RecoveryAction?
+
+  @@index([recoveryCaseId])
+  @@index([recommendedAction])
+}
+
+model Policy {
+  id            String       @id @default(cuid())
+  name          String
+  version       Int          @default(1)
+  rules         Json
+  status        PolicyStatus @default(ACTIVE)
+  effectiveFrom DateTime     @default(now())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  policyDecisions PolicyDecision[]
+
+  @@unique([name, version])
+  @@index([status])
+}
+
+model PolicyDecision {
+  id              String             @id @default(cuid())
+  recoveryCaseId  String
+  aiDecisionId    String             @unique
+  policyId        String?
+  policyVersion   Int?
+  result          PolicyResult
+  evaluatedAction RecoveryActionType
+  reason          String?
+  violatedRules   String[]           @default([])
+  evaluatedAt     DateTime           @default(now())
+  createdAt       DateTime           @default(now())
+
+  recoveryCase RecoveryCase @relation(fields: [recoveryCaseId], references: [id])
+  aiDecision   AIDecision   @relation(fields: [aiDecisionId], references: [id])
+  policy       Policy?      @relation(fields: [policyId], references: [id])
+
+  action RecoveryAction?
+
+  @@index([recoveryCaseId])
+  @@index([policyId])
+  @@index([result])
+}
+
+model RecoveryAction {
+  id               String               @id @default(cuid())
+  recoveryCaseId   String
+  policyDecisionId String               @unique
+  aiDecisionId     String?              @unique
+  type             RecoveryActionType
+  status           RecoveryActionStatus @default(REQUESTED)
+  scheduledFor     DateTime?
+  executedAt       DateTime?
+  attemptId        String?              @unique
+  workflowId       String?
+  idempotencyKey   String?              @unique
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  recoveryCase   RecoveryCase    @relation(fields: [recoveryCaseId], references: [id])
+  policyDecision PolicyDecision  @relation(fields: [policyDecisionId], references: [id])
+  aiDecision     AIDecision?     @relation(fields: [aiDecisionId], references: [id])
+  attempt        PaymentAttempt? @relation(fields: [attemptId], references: [id])
+
+  notifications Notification[]
+
+  @@index([recoveryCaseId])
+  @@index([status])
+  @@index([scheduledFor])
+}
+
+model Notification {
+  id               String              @id @default(cuid())
+  recoveryCaseId   String
+  recoveryActionId String?
+  customerId       String
+  channel          NotificationChannel
+  status           NotificationStatus  @default(PENDING)
+  templateKey      String?
+  sentAt           DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  recoveryCase   RecoveryCase    @relation(fields: [recoveryCaseId], references: [id])
+  recoveryAction RecoveryAction? @relation(fields: [recoveryActionId], references: [id])
+  customer       Customer        @relation(fields: [customerId], references: [id])
+
+  @@index([recoveryCaseId])
+  @@index([customerId])
+  @@index([status])
+}
+
+model AuditEvent {
+  id             String         @id @default(cuid())
+  occurredAt     DateTime       @default(now())
+  eventType      AuditEventType
+  actor          String
+  paymentId      String?
+  recoveryCaseId String?
+  decision       String?
+  policyResult   PolicyResult?
+  modelVersion   String?
+  correlationId  String?
+  traceId        String?
+  metadata       Json?
+  createdAt      DateTime       @default(now())
+
+  payment      Payment?      @relation(fields: [paymentId], references: [id])
+  recoveryCase RecoveryCase? @relation(fields: [recoveryCaseId], references: [id])
+
+  @@index([eventType])
+  @@index([paymentId])
+  @@index([recoveryCaseId])
+  @@index([correlationId])
+  @@index([occurredAt])
+}

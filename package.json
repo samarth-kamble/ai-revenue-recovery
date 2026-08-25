@@ -16,7 +16,14 @@
     "infra:reset": "bash infrastructure/scripts/compose.sh down -v",
     "infra:logs": "bash infrastructure/scripts/compose.sh logs -f",
     "infra:ps": "bash infrastructure/scripts/compose.sh ps",
-    "infra:check": "bash infrastructure/scripts/check-connectivity.sh"
+    "infra:check": "bash infrastructure/scripts/check-connectivity.sh",
+    "db:generate": "pnpm --filter @workspace/database db:generate",
+    "db:migrate": "pnpm --filter @workspace/database db:migrate",
+    "db:migrate:deploy": "pnpm --filter @workspace/database db:migrate:deploy",
+    "db:migrate:status": "pnpm --filter @workspace/database db:migrate:status",
+    "db:validate": "pnpm --filter @workspace/database db:validate",
+    "db:studio": "pnpm --filter @workspace/database db:studio",
+    "db:reset": "pnpm --filter @workspace/database db:reset"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",

@@ -34,7 +34,7 @@ Following [`PROJECT_SPEC.md` §22](../../PROJECT_SPEC.md):
 
 ## Index
 
-| ADR | Title | Status |
-| --- | --- | --- |
-| [ADR-001](./ADR-001-monorepo-turborepo-pnpm.md) | Monorepo on Turborepo + pnpm workspaces | Accepted |
-| [ADR-002](./ADR-002-vitest-over-jest.md) | Vitest for TypeScript testing (deviates from spec's Jest) | Accepted |
+| ADR                                             | Title                                                     | Status   |
+| ----------------------------------------------- | --------------------------------------------------------- | -------- |
+| [ADR-001](./ADR-001-monorepo-turborepo-pnpm.md) | Monorepo on Turborepo + pnpm workspaces                   | Accepted |
+| [ADR-002](./ADR-002-vitest-over-jest.md)        | Vitest for TypeScript testing (deviates from spec's Jest) | Accepted |

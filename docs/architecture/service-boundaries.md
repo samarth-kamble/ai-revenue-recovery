@@ -3,7 +3,7 @@
 Faithful to [`PROJECT_SPEC.md` §8](../../PROJECT_SPEC.md). Each service owns a
 single area of responsibility. The boundaries exist to keep the
 **recommend → authorize → execute** separation intact: no single service both
-*decides* with AI and *moves money*.
+_decides_ with AI and _moves money_.
 
 See also: [architecture overview](./README.md) · [recovery lifecycle](./recovery-lifecycle.md).
 
@@ -50,14 +50,14 @@ flowchart TB
 The chain from [`PROJECT_SPEC.md` §5.1](../../PROJECT_SPEC.md) determines which
 service is allowed to do what:
 
-- **AI Decision Service + ML Inference Service** *recommend*. They gather
+- **AI Decision Service + ML Inference Service** _recommend_. They gather
   context, predict `P(recovery)`, and emit a structured recommendation. They
   **never** execute financial actions.
-- **Policy Service** *authorizes*. It applies deterministic rules and returns
+- **Policy Service** _authorizes_. It applies deterministic rules and returns
   `ALLOWED` or `DENIED`. It cannot be overridden by the AI.
 - **Temporal workflow** (see [workflow architecture, §11](../../PROJECT_SPEC.md))
-  *executes* only what policy approved.
-- **Payment Service** *acts*. It is the only service that transitions real
+  _executes_ only what policy approved.
+- **Payment Service** _acts_. It is the only service that transitions real
   payment state.
 
 ## The eleven services
@@ -76,14 +76,14 @@ moves payment state, and it is the terminal actor in the execution chain.
 ### Revenue Detection Service
 
 Identifies failed or recoverable revenue, calculates revenue at risk, detects
-relevant revenue-risk events, and creates revenue-risk records. It answers *"how
-much is at stake?"* — it does not decide what to do about it.
+relevant revenue-risk events, and creates revenue-risk records. It answers _"how
+much is at stake?"_ — it does not decide what to do about it.
 
 ### Recovery Service
 
 Owns recovery cases, recovery state, the recovery lifecycle, and recovery
 history. It is the orchestrator of a case's progression, delegating the
-*decision* to the AI Decision Service and the *authorization* to Policy.
+_decision_ to the AI Decision Service and the _authorization_ to Policy.
 
 ### AI Decision Service
 
@@ -119,7 +119,7 @@ across the system (principle §5.3: every consequential action is auditable).
 ### Analytics Service
 
 Revenue metrics, recovery metrics, AI performance, funnel analytics, and
-operational metrics. It *measures*; its figures must trace back to real
+operational metrics. It _measures_; its figures must trace back to real
 evaluation runs (principle §5.5), never fabricated.
 
 ### Simulation Engine
@@ -131,16 +131,16 @@ world during development.
 
 ## Ownership summary
 
-| Service | Owns / decides | Explicitly does **not** |
-| --- | --- | --- |
-| API Gateway | Edge concerns (authn/z, routing, limits) | Business logic |
-| Payment | Payment state + transitions | Recovery decisions |
-| Revenue Detection | Revenue-at-risk detection | Choosing interventions |
-| Recovery | Case lifecycle + history | Predicting / authorizing |
-| AI Decision | Structured recommendation | Executing financial actions |
-| ML Inference | `P(recovery)` + model version | Selecting the action |
-| Policy | Deterministic authorization | Being overridden by AI |
-| Notification | Simulated delivery | Real provider integration |
-| Audit | Append-only event history | Mutating records |
-| Analytics | Metrics from evaluation | Fabricating metrics |
-| Simulation | Synthetic data + ground truth | Live/production data |
+| Service           | Owns / decides                           | Explicitly does **not**     |
+| ----------------- | ---------------------------------------- | --------------------------- |
+| API Gateway       | Edge concerns (authn/z, routing, limits) | Business logic              |
+| Payment           | Payment state + transitions              | Recovery decisions          |
+| Revenue Detection | Revenue-at-risk detection                | Choosing interventions      |
+| Recovery          | Case lifecycle + history                 | Predicting / authorizing    |
+| AI Decision       | Structured recommendation                | Executing financial actions |
+| ML Inference      | `P(recovery)` + model version            | Selecting the action        |
+| Policy            | Deterministic authorization              | Being overridden by AI      |
+| Notification      | Simulated delivery                       | Real provider integration   |
+| Audit             | Append-only event history                | Mutating records            |
+| Analytics         | Metrics from evaluation                  | Fabricating metrics         |
+| Simulation        | Synthetic data + ground truth            | Live/production data        |

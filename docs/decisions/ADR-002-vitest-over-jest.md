@@ -10,10 +10,11 @@
 `PROJECT_SPEC.md` §7 lists **Jest** as the TypeScript test runner. When wiring up
 test tooling (task T002), the scaffold already in place made Jest a poor fit:
 every workspace is native ESM (`"type": "module"`), the web app targets Next.js 16
-+ React 19, and Jest's ESM support still depends on transform/Babel config plus
-`NODE_OPTIONS=--experimental-vm-modules`, which is fragile across a monorepo of
-ESM packages. This is a **deliberate deviation from the spec**, recorded here per
-the ADR policy (§7, §21, §22).
+
+- React 19, and Jest's ESM support still depends on transform/Babel config plus
+  `NODE_OPTIONS=--experimental-vm-modules`, which is fragile across a monorepo of
+  ESM packages. This is a **deliberate deviation from the spec**, recorded here per
+  the ADR policy (§7, §21, §22).
 
 ## Decision
 

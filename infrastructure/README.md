@@ -32,14 +32,14 @@ pnpm infra:check
 
 ## Scripts
 
-| Command | What it does |
-| --- | --- |
-| `pnpm infra:up` | Start Postgres + Redis in the background and **wait** until both are healthy (`up -d --wait`). |
-| `pnpm infra:check` | Run connectivity checks: `pg_isready` + `SELECT 1`, and Redis `PING` + a set/get round-trip. |
-| `pnpm infra:ps` | Show container status and health. |
-| `pnpm infra:logs` | Tail logs from both services (`Ctrl-C` to stop). |
-| `pnpm infra:down` | Stop and remove the containers. **Data is preserved** in named volumes. |
-| `pnpm infra:reset` | Stop and remove containers **and volumes** — this destroys all local data. |
+| Command            | What it does                                                                                   |
+| ------------------ | ---------------------------------------------------------------------------------------------- |
+| `pnpm infra:up`    | Start Postgres + Redis in the background and **wait** until both are healthy (`up -d --wait`). |
+| `pnpm infra:check` | Run connectivity checks: `pg_isready` + `SELECT 1`, and Redis `PING` + a set/get round-trip.   |
+| `pnpm infra:ps`    | Show container status and health.                                                              |
+| `pnpm infra:logs`  | Tail logs from both services (`Ctrl-C` to stop).                                               |
+| `pnpm infra:down`  | Stop and remove the containers. **Data is preserved** in named volumes.                        |
+| `pnpm infra:reset` | Stop and remove containers **and volumes** — this destroys all local data.                     |
 
 All scripts delegate to `infrastructure/scripts/compose.sh`, which pins the
 compose file and sets the compose project directory to the repo root so the
@@ -47,10 +47,10 @@ root-level `.env` is loaded automatically.
 
 ## Services
 
-| Service | Image | Host port | Purpose |
-| --- | --- | --- | --- |
-| `postgres` | `postgres:16-alpine` | `5432` | Transactional data + audit trail |
-| `redis` | `redis:7-alpine` | `6379` | Locks, idempotency keys, cache |
+| Service    | Image                | Host port | Purpose                          |
+| ---------- | -------------------- | --------- | -------------------------------- |
+| `postgres` | `postgres:16-alpine` | `5432`    | Transactional data + audit trail |
+| `redis`    | `redis:7-alpine`     | `6379`    | Locks, idempotency keys, cache   |
 
 ### Connection details (defaults)
 
@@ -71,11 +71,11 @@ restart. Postgres and Redis each persist to a named Docker volume
 Every value is overridable via the root `.env` (copy it from `.env.example`).
 The most useful overrides:
 
-| Variable | Default | Notes |
-| --- | --- | --- |
-| `POSTGRES_PORT` | `5432` | Change if `5432` is already in use on your machine. |
-| `REDIS_PORT` | `6379` | Change if `6379` is already in use. |
-| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | `postgres` / `postgres` / `revenue_recovery` | Local dev credentials. |
+| Variable                                              | Default                                      | Notes                                               |
+| ----------------------------------------------------- | -------------------------------------------- | --------------------------------------------------- |
+| `POSTGRES_PORT`                                       | `5432`                                       | Change if `5432` is already in use on your machine. |
+| `REDIS_PORT`                                          | `6379`                                       | Change if `6379` is already in use.                 |
+| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | `postgres` / `postgres` / `revenue_recovery` | Local dev credentials.                              |
 
 ## Troubleshooting
 

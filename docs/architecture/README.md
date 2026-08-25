@@ -9,12 +9,12 @@ truth**, and every page here links back to the spec section it reflects.
 
 ## Contents
 
-| Document | What it covers | Spec source |
-| --- | --- | --- |
-| This page | System context, the money-movement boundary, architecture principles | [§5](../../PROJECT_SPEC.md), [§6](../../PROJECT_SPEC.md) |
-| [service-boundaries.md](./service-boundaries.md) | The eleven services, what each owns, and the recommend → authorize → execute chain | [§8](../../PROJECT_SPEC.md) |
-| [recovery-lifecycle.md](./recovery-lifecycle.md) | The eight-stage lifecycle and the failed-payment vertical slice | [§3](../../PROJECT_SPEC.md), [§4](../../PROJECT_SPEC.md) |
-| [../decisions/](../decisions/) | Architecture Decision Records (ADRs) | — |
+| Document                                         | What it covers                                                                     | Spec source                                              |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| This page                                        | System context, the money-movement boundary, architecture principles               | [§5](../../PROJECT_SPEC.md), [§6](../../PROJECT_SPEC.md) |
+| [service-boundaries.md](./service-boundaries.md) | The eleven services, what each owns, and the recommend → authorize → execute chain | [§8](../../PROJECT_SPEC.md)                              |
+| [recovery-lifecycle.md](./recovery-lifecycle.md) | The eight-stage lifecycle and the failed-payment vertical slice                    | [§3](../../PROJECT_SPEC.md), [§4](../../PROJECT_SPEC.md) |
+| [../decisions/](../decisions/)                   | Architecture Decision Records (ADRs)                                               | —                                                        |
 
 ## What the platform does
 
@@ -29,7 +29,7 @@ step.
 
 The high-level component view derived from [`PROJECT_SPEC.md` §6](../../PROJECT_SPEC.md).
 The critical property is that **intelligence and money movement are separated**:
-the ML model and LLM agent only *produce a recommendation*; a deterministic
+the ML model and LLM agent only _produce a recommendation_; a deterministic
 policy gate authorizes it; a durable workflow executes it; only the payment
 service acts.
 
@@ -100,8 +100,8 @@ load-bearing. Everything else is downstream of them.
 
 1. **AI and financial execution are separated.** `LLM → Payment API` is never
    allowed. The only path is `LLM → structured recommendation → Policy Engine →
-   (approved?) → Workflow → Payment System`.
-2. **Deterministic controls override AI.** The agent may *recommend*, but it can
+(approved?) → Workflow → Payment System`.
+2. **Deterministic controls override AI.** The agent may _recommend_, but it can
    never override retry limits, retry intervals, contact limits, amount limits,
    business rules, stop conditions, or escalation requirements.
 3. **Every financial action is auditable.** Every consequential decision and
