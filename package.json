@@ -7,7 +7,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "turbo format",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "benchmark": ".venv/bin/python data/synthetic/generate_dataset.py && .venv/bin/python ml/training/train_model.py && .venv/bin/python ml/evaluation/run_benchmark.py"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",

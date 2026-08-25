@@ -1,0 +1,10 @@
+Metric,Blind_Retry_Baseline,AI_Recovery_Platform,Improvement
+Total_Scenarios,1000,1000,0
+Total_Revenue_At_Risk_INR,4729655.0,4729655.0,0
+Recovered_Revenue_INR,3544948.0,3544948.0,0.0
+Recovery_Rate_Pct,74.95,74.95,0.0
+Total_Retry_Attempts,3000,900,-300 (70.0% fewer)
+Total_Retry_Cost_INR,15000.0,4500.0,"Saved ₹10,500.00"
+Precision_Pct,N/A,82.33,N/A
+Recall_Pct,N/A,100.0,N/A
+F1_Score_Pct,N/A,90.31,N/A
