@@ -1,0 +1,190 @@
+services:
+  # =========================================================================
+  # Databases & Cache
+  # =========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: rzp-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: ai_revenue_recovery
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: rzp-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # =========================================================================
+  # Python ML Inference Microservice
+  # =========================================================================
+  ml-inference:
+    build:
+      context: ../..
+      dockerfile: service/ml-inference/Dockerfile
+    container_name: rzp-ml-inference
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+      - PYTHONUNBUFFERED=1
+
+  # =========================================================================
+  # Backend NestJS Microservices
+  # =========================================================================
+  api-gateways:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.node
+      args:
+        APP_NAME: api-gateways
+    container_name: rzp-api-gateways
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/ai_revenue_recovery?schema=public
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  payment-service:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.node
+      args:
+        APP_NAME: payment-service
+    container_name: rzp-payment-service
+    restart: always
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/ai_revenue_recovery?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  recovery-service:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.node
+      args:
+        APP_NAME: recovery-service
+    container_name: rzp-recovery-service
+    restart: always
+    ports:
+      - "4002:4002"
+    environment:
+      - PORT=4002
+      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/ai_revenue_recovery?schema=public
+      - ML_INFERENCE_URL=http://ml-inference:5001
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ml-inference:
+        condition: service_started
+
+  notification-service:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.node
+      args:
+        APP_NAME: notification-service
+    container_name: rzp-notification-service
+    restart: always
+    ports:
+      - "4003:4003"
+    environment:
+      - PORT=4003
+      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/ai_revenue_recovery?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  policy-service:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.node
+      args:
+        APP_NAME: policy-service
+    container_name: rzp-policy-service
+    restart: always
+    ports:
+      - "4004:4004"
+    environment:
+      - PORT=4004
+      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/ai_revenue_recovery?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  analytics-service:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.node
+      args:
+        APP_NAME: analytics-service
+    container_name: rzp-analytics-service
+    restart: always
+    ports:
+      - "4005:4005"
+    environment:
+      - PORT=4005
+      - DATABASE_URL=postgresql://postgres:postgrespassword@postgres:5432/ai_revenue_recovery?schema=public
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # =========================================================================
+  # Next.js Merchant Web Dashboard
+  # =========================================================================
+  web:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.node
+      args:
+        APP_NAME: web
+    container_name: rzp-web-dashboard
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NEXT_PUBLIC_PAYMENT_SERVICE_URL=http://localhost:4001/api/v1
+      - NEXT_PUBLIC_RECOVERY_SERVICE_URL=http://localhost:4002/api/v1
+      - NEXT_PUBLIC_NOTIFICATION_SERVICE_URL=http://localhost:4003/api/v1
+      - NEXT_PUBLIC_POLICY_SERVICE_URL=http://localhost:4004/api/v1
+      - NEXT_PUBLIC_ANALYTICS_SERVICE_URL=http://localhost:4005/api/v1
+    depends_on:
+      - payment-service
+      - recovery-service
+
+volumes:
+  postgres_data:
+  redis_data:

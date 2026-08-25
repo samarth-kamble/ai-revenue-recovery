@@ -1,39 +1,37 @@
-import { Controller, Get, Post, Body, Param, Headers, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Headers } from '@nestjs/common';
 import { RecoveryService } from './recovery.service';
+import { RecoveryWorkerService } from './recovery-worker.service';
 import { EvaluateRecoveryDto } from './dto/evaluate-recovery.dto';
 
 @Controller('recovery')
 export class RecoveryController {
-  constructor(private readonly recoveryService: RecoveryService) {}
+  constructor(
+    private readonly recoveryService: RecoveryService,
+    private readonly recoveryWorkerService: RecoveryWorkerService,
+  ) {}
 
   @Post('evaluate')
-  async evaluateCase(
-    @Headers('x-merchant-id') merchantIdHeader: string,
-    @Body() dto: EvaluateRecoveryDto,
-  ) {
-    const merchantId = merchantIdHeader || dto.merchantId;
-    return this.recoveryService.evaluateRecoveryCase({
-      ...dto,
-      merchantId,
-    });
+  async evaluateCase(@Body() dto: EvaluateRecoveryDto) {
+    return this.recoveryService.evaluateRecoveryCase(dto);
+  }
+
+  @Post('execute-pending')
+  async executePendingActions(@Headers('x-merchant-id') merchantIdHeader?: string) {
+    return this.recoveryWorkerService.executePendingActions(merchantIdHeader);
   }
 
   @Get('cases')
-  async listCases(@Headers('x-merchant-id') merchantId: string) {
-    if (!merchantId) {
-      throw new BadRequestException('x-merchant-id header is required.');
-    }
+  async getCases(@Headers('x-merchant-id') merchantIdHeader?: string) {
+    const merchantId = merchantIdHeader || 'merch_demo_rzp';
     return this.recoveryService.listRecoveryCases(merchantId);
   }
 
   @Get('cases/:id')
-  async getCase(
+  async getCaseById(
     @Param('id') id: string,
-    @Headers('x-merchant-id') merchantId: string,
+    @Headers('x-merchant-id') merchantIdHeader?: string,
   ) {
-    if (!merchantId) {
-      throw new BadRequestException('x-merchant-id header is required.');
-    }
+    const merchantId = merchantIdHeader || 'merch_demo_rzp';
     return this.recoveryService.getRecoveryCaseById(id, merchantId);
   }
 }

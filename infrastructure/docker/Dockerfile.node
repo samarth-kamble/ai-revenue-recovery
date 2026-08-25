@@ -1,0 +1,25 @@
+FROM node:20-alpine AS base
+
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@10.33.4 --activate
+
+WORKDIR /app
+
+# Copy root manifests
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY packages ./packages
+COPY apps ./apps
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# ARG for specific app build
+ARG APP_NAME
+ENV APP_NAME=${APP_NAME}
+
+# Build specific package/app
+RUN pnpm --filter ${APP_NAME} build
+
+EXPOSE 3000 4000 4001 4002 4003 4004 4005
+
+CMD ["sh", "-c", "pnpm --filter ${APP_NAME} start"]
