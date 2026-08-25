@@ -28,16 +28,19 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     let message: string | object = 'Internal server error';
 
-    if (typeof exceptionResponse === 'string') {
-      message = exceptionResponse;
-    } else if (
-      typeof exceptionResponse === 'object' &&
-      exceptionResponse !== null
-    ) {
-      const resObj = exceptionResponse as Record<string, unknown>;
-      message = resObj.message || resObj.error || 'Request error';
-    } else if (exception instanceof Error) {
-      message = exception.message;
+    if (exception instanceof HttpException) {
+      if (typeof exceptionResponse === 'string') {
+        message = exceptionResponse;
+      } else if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null
+      ) {
+        const resObj = exceptionResponse as Record<string, unknown>;
+        message = resObj.message || resObj.error || 'Request error';
+      }
+    } else {
+      // Unhandled / Internal Server Error - Sanitize response
+      message = 'An unexpected internal error occurred';
     }
 
     this.logger.error(
