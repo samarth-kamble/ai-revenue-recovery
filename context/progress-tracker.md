@@ -86,11 +86,11 @@
 - ⬜ Metrics
 
 ## Phase 11 — UI
-- ⬜ Dashboard
-- ⬜ Cases
-- ⬜ Case detail
-- ⬜ Payment detail
-- ⬜ Timeline
+- 🟢 Dashboard
+- 🟢 Cases
+- 🟢 Case detail
+- 🟢 Payment detail
+- 🟢 Timeline
 
 ## Phase 12 — Evaluation
 - ⬜ Synthetic data
@@ -108,9 +108,9 @@
 
 ## Current Work
 
-**Phase:** 9 — Workflow Execution & Dashboard UI  
-**Task:** Merchant Recovery Visualizer & Dashboard  
-**Last verified:** Recovery Service ML Prediction, AI Decision Engine, & Policy Checks
+**Phase:** 12 — Benchmark Evaluation Suite & Workflow Worker  
+**Task:** Synthetic Data Generator & Execution Benchmarks  
+**Last verified:** Feature-Based Next.js Dashboard with TanStack Query & shadcn UI
 
 ## Agent Rule
 
