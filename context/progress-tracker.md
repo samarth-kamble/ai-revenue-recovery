@@ -11,51 +11,51 @@
 - ⚠️ Needs review
 
 ## Phase 0 — Understanding
-- ⬜ PROJECT_SPEC reviewed
-- ⬜ Architecture reviewed
-- ⬜ Domain model reviewed
-- ⬜ Current task identified
+- 🟢 PROJECT_SPEC reviewed
+- 🟢 Architecture reviewed
+- 🟢 Domain model reviewed
+- 🟢 Current task identified
 
 ## Phase 1 — Foundation
-- ⬜ Repository
-- ⬜ Workspace
-- ⬜ TypeScript
-- ⬜ Lint
-- ⬜ Formatting
-- ⬜ Environment
-- ⬜ CI
+- 🟢 Repository
+- 🟢 Workspace
+- 🟢 TypeScript
+- 🟢 Lint
+- 🟢 Formatting
+- 🟢 Environment
+- 🟢 CI
 
 ## Phase 2 — Domain
-- ⬜ Domain model finalized
-- ⬜ State machines finalized
-- ⬜ Relationships verified
-- ⬜ Idempotency rules verified
+- 🟢 Domain model finalized
+- 🟢 State machines finalized
+- 🟢 Relationships verified
+- 🟢 Idempotency rules verified
 
 ## Phase 3 — Database
-- ⬜ Prisma schema
-- ⬜ PostgreSQL
-- ⬜ Migration
-- ⬜ Seed
-- ⬜ Database tests
+- 🟢 Prisma schema
+- 🟢 PostgreSQL
+- 🟢 Migration
+- 🟢 Seed
+- 🟢 Database tests
 
 ## Phase 4 — Security
-- ⬜ Authentication
-- ⬜ RBAC
-- ⬜ Tenant isolation
-- ⬜ Protected APIs
+- 🟢 Authentication
+- 🟢 RBAC
+- 🟢 Tenant isolation
+- 🟢 Protected APIs
 
 ## Phase 5 — Payments
-- ⬜ Payment
-- ⬜ PaymentAttempt
-- ⬜ PaymentFailure
-- ⬜ Idempotency
-- ⬜ UNKNOWN handling
-- ⬜ State machine
+- 🟢 Payment
+- 🟢 PaymentAttempt
+- 🟢 PaymentFailure
+- 🟢 Idempotency
+- 🟢 UNKNOWN handling
+- 🟢 State machine
 
 ## Phase 6 — Recovery
-- ⬜ RevenueRisk
-- ⬜ RecoveryCase
-- ⬜ Recovery lifecycle
+- 🟢 RevenueRisk
+- 🟢 RecoveryCase
+- 🟢 Recovery lifecycle
 - ⬜ ML prediction
 
 ## Phase 7 — AI
@@ -79,8 +79,8 @@
 - ⬜ Terminal outcomes
 
 ## Phase 10 — Observability
-- ⬜ AuditEvent
-- ⬜ Correlation IDs
+- 🟢 AuditEvent
+- 🟢 Correlation IDs
 - ⬜ Trace IDs
 - ⬜ Notifications
 - ⬜ Metrics
@@ -108,9 +108,9 @@
 
 ## Current Work
 
-**Phase:** 1 — Repository Foundation  
-**Task:** Not started  
-**Last verified:** None
+**Phase:** 7 — AI Recovery Agent & Policy Guardrails  
+**Task:** ML Prediction & AI Agent Recommendation Service  
+**Last verified:** Payment Service Ingestion & Recovery Case Initialization
 
 ## Agent Rule
 
